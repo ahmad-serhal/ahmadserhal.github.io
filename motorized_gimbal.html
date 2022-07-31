@@ -1,0 +1,196 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<title>Motorized Gimbal - Ahmad Serhal</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+	</head>
+	<body class="is-preload">
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Header -->
+				<header id="header">
+					<a href="index" class="logo">Ahmad Serhal</a>
+				</header>
+
+			<!-- Nav -->
+			<nav id="nav">
+				<ul class="links">
+					<li><a href="about">About</a>
+					<li><a href="Resume">Resume</a></li>
+					<li><a href="index">Projects</a>
+						<ul class="links">
+							<li><a href="Engineering_Plans">Engineering Plans</a></li>
+							<li class="active"><a href="Mechanical_designs">Mechanical Design</a></li>
+						</ul>
+					</li>
+						
+					<li><a href="cad_designs">CAD Designs</a></li>
+				</ul>
+				<ul class="icons">
+					<li><a href="https://www.linkedin.com/in/ahmad-serhal-560154186" class="icon brands fa-linkedin"><span class="label">Linkedin</span></a></li>
+				</ul>
+			</nav>
+
+				<!-- Main -->
+					<div id="main">
+
+						<!-- Post -->
+							<section class="post">
+								<header class="major">
+									<h1>Motorized Gimbal</h1>
+								</header>
+
+								<!-- DESCRIPTION -->
+									<h2>Description</h2>
+									<p>
+										A motorized gimbal that operates using steppers rather than brushless DC motors. A motorized gimbal can achieve a more stable shot than one lacking the motors. Moreover, it can manipulate the phone’s orientation without the need for any manual adjustments.
+									</p>
+										<span class="image fit"><img src="images/motorized_gimbal_assembly_without_phone2.JPG" alt="" /></span>
+
+									<hr />
+								<!-- OBJECTIVE -->
+								<h2>Objective</h2>
+								<p>
+									To design a motorized phone gimbal with 5V stepper motors that provide precise stabilization for captured shots.
+								</p>
+									<hr />
+								<!-- CHALLANGES -->
+								<h2>Tasks</h2>
+									<div class="row">
+										<div class="col-12-medium">
+											<ul>
+												<li>Orienting the motors to be able to support the axial weights.</li>
+												<li>Syncing the sensors and the actuators.</li>
+												<li>Programming the mechanism.</li>
+											</ul>
+										</div>
+									</div>
+									<dl>
+										<dt>Orienting the motors to be able to support the axial weights</dt>
+										<dd>
+											<p>The motors that were used in this project were the 5V DC motors that can provide 34 N.mm of torque. However, these motors do not support high torque. Therefore, it was necessary that the load should act axially on the motors to be able to handle the highest possible torque. The final design focused mainly on this objective and was tested and proven efficient.</p>
+										</dd>
+										<dt>Syncing the sensors and the actuators</dt>
+										<dd>
+											<p>A stepper motor uses steps in order to perform the necessary output. However, when using a sensor such as the MPU-6000, which provides more precise measurements, it is necessary that both the measurement and the output of the actuator are in sync. Therefore, the sensors’ values were rounded to properly coordinate with the stepper motor.</p>
+											<div class="box alt">
+												<div class="row gtr-50 gtr-uniform">
+													<div class="col-4"><span class="image fit"><img src="images/stepper_motor_image.jpg" alt="" /></span></div>
+													<div class="col-4"><span class="image fit"><img src="images/GY_521_sensor.jpg" alt="" /></span></div>
+												</div>
+											</div>
+										</dd>
+										<dt>Programming the mechanism</dt>
+										<dd>
+											<p>Although most of the programming needed for this mechanism is simple and can be collected through several sources on the internet, integrating it to be interactive and operate as a single program posed a challenge. In addition, all the motors had to operate simultaneously in order to perform smooth transitions. In order to have the desired outcome, several factors had to be kept in mind. Firstly, which motor needs to be engaged and in which direction at a given position had to be established. This has been tackled by assigning each parameter X, Y, and Z to a specific motor so that it operates according to the change in the assigned parameter. Secondly, an upper and lower boundary had to be established in order to avoid the frequent and unnecessary agitation caused when the change is minute. Lastly, the values of the boundaries had to be determined and set in an acceptable manner. This provides an efficient operation of the gimbal.</p>
+											<pre><code>
+//read gyro data
+GyX=(Wire.read()<<8|Wire.read()) + GyXoff;
+GyY=(Wire.read()<<8|Wire.read()) + GyYoff;
+GyZ=(Wire.read()<<8|Wire.read()) + GyZoff;
+
+//get pitch/roll
+getAngle(AcX,AcY,AcZ);
+
+//change= pitch - pitch_previous;
+//change_absolute = abs(change);
+
+if (pitch > 3){
+    myStepper.step(32);
+  }
+else if ( pitch < -3){
+    myStepper.step(-32);
+  }
+
+//send the data out the serial port
+Serial.print("Angle: ");
+Serial.print("Pitch = "); Serial.print(pitch);
+Serial.print(" | Roll = "); Serial.println(roll);
+
+Serial.print("The previous pitch is ");Serial.print(pitch_previous);
+Serial.print("The change is ");Serial.println(change_absolute);
+												</code></pre>
+										</dd>
+									</dl>
+									<hr />
+									<!--COMPONENTS-->
+									<h2>Main Components</h2>
+									<div class="table-wrapper">
+										<table>
+											<thead>
+												<tr>
+													<th>Name</th>
+													<th>Function</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>Arms</td>
+													<td>Connects the stepper motors and the phone together.</td>
+												</tr>
+												<tr>
+													<td>Phone Holder</td>
+													<td>Supports the phone.</td>
+												</tr>
+												<tr>
+													<td>Phone Holder Clamps</td>
+													<td>Fixes the phone in its place.</td>
+												</tr>
+											</tbody>
+										</table>
+									</div>
+									<hr />
+									<!--RESULTS-->
+								<h2>Results</h2>
+								<p>A gimbal is a vital tool used in the filming industry and is considered expensive if a professional one is required. Designing a gimbal that can be 3D printed has the capability of decreasing this cost tremendously. However, in this project, the motors used were considered weak and could not handle large torques, which restricted the design process. Moreover, when using an Arduino that executes a single line of programming at a time, a lag in the operation is expected. However, regarding the outcome of this project, I believe that for a low-budget 3D printable gimbal, the results are more than satisfactory.</p>
+								<span class="image fit"><img src="images/motorized_gimbal_assembly2.JPG" alt="" /></span>
+							</section>
+					</div>
+				<!-- Footer -->
+					<footer id="footer">
+
+					</section>
+						<section class="alt">
+							<h3>Address</h3>
+							<p>Beirut, Lebanon</p>
+						</section>
+						<section>
+							<h3>Phone</h3>
+							<p>(961) 71420106</p>
+						</section>
+						<section>
+							<h3>Email</h3>
+							<p>ahmad_serhal@outlook.com</p>
+						</section>
+						<section>
+							<h3>Social</h3>
+							<ul class="icons alt">
+								<li><a href="https://www.linkedin.com/in/ahmad-serhal-560154186" class="icon brands fa-linkedin"><span class="label">Linkedin</span></a></li>
+							</ul>
+						</section>
+					</footer>
+
+				<!-- Copyright -->
+					<div id="copyright">
+					<ul><li>&copy; Ahmad Serhal</li>
+					</div>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/browser.min.js"></script>
+			<script src="assets/js/breakpoints.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
